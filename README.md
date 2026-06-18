@@ -28,8 +28,10 @@ set the theme and enable plugins, and a timestamped backup is made first.
 3. **Ghostty** — appends an `include` for `~/App/ghostty/config` to Ghostty's
    config so your own settings are sourced.
 4. **oh-my-zsh** — unattended install if missing (keeps your existing `.zshrc`).
-5. **Theme + plugins** — clones powerlevel10k, `zsh-autosuggestions`, and
-   `fast-syntax-highlighting`, then enables them in `~/.zshrc`.
+5. **Theme + plugins** — clones powerlevel10k, `zsh-autosuggestions`,
+   `zsh-completions`, and `fast-syntax-highlighting`, then enables them in
+   `~/.zshrc` alongside the built-in `kubectl` plugin (extra completions plus
+   `k`/`kgp`/… aliases).
 6. **Integrations + aliases** — writes `~/.oh-my-zsh/custom/modern-cli.zsh`, which
    oh-my-zsh sources *after* plugins so tool init and aliases win.
 

@@ -81,7 +81,6 @@ clone() { # clone <repo-url> <dest>
 }
 say "Installing powerlevel10k + zsh plugins"
 clone https://github.com/romkatv/powerlevel10k.git       "$ZSH_CUSTOM/themes/powerlevel10k"
-clone https://github.com/zsh-users/zsh-completions.git     "$ZSH_CUSTOM/plugins/zsh-completions"
 clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
 
 # ---- 5. .zshrc: theme + plugins line (backup first) ------------------------
@@ -102,7 +101,7 @@ else
 fi
 
 # Ensure the desired plugins are enabled (order matters: syntax-highlighting last).
-WANT_PLUGINS="git kubectl docker docker-compose zsh-completions fast-syntax-highlighting"
+WANT_PLUGINS="git kubectl docker docker-compose fast-syntax-highlighting"
 if grep -q '^plugins=(' "$ZSHRC"; then
   sed -i '' "s#^plugins=(.*)#plugins=($WANT_PLUGINS)#" "$ZSHRC"
 else

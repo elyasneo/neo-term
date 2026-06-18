@@ -102,7 +102,7 @@ else
 fi
 
 # Ensure the desired plugins are enabled (order matters: syntax-highlighting last).
-WANT_PLUGINS="git kubectl zsh-completions fast-syntax-highlighting"
+WANT_PLUGINS="git kubectl docker docker-compose zsh-completions fast-syntax-highlighting"
 if grep -q '^plugins=(' "$ZSHRC"; then
   sed -i '' "s#^plugins=(.*)#plugins=($WANT_PLUGINS)#" "$ZSHRC"
 else

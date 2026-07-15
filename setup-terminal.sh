@@ -63,6 +63,19 @@ else
   ok "added include -> $GHOSTTY_CFG"
 fi
 
+# Fix broken cursor/line-editing over SSH: Ghostty sets TERM=xterm-ghostty,
+# which most remotes lack a terminfo entry for. ssh-terminfo installs it on the
+# remote automatically; ssh-env falls back to xterm-256color if that can't run.
+USER_GHOSTTY_CFG="$HOME/App/ghostty/config"
+SSH_INTEGRATION_LINE="shell-integration-features = ssh-env,ssh-terminfo"
+if [[ -f "$USER_GHOSTTY_CFG" ]] && grep -q '^shell-integration-features' "$USER_GHOSTTY_CFG"; then
+  ok "Ghostty shell-integration-features already set"
+else
+  mkdir -p "$(dirname "$USER_GHOSTTY_CFG")"
+  printf '\n%s\n' "$SSH_INTEGRATION_LINE" >>"$USER_GHOSTTY_CFG"
+  ok "enabled ssh-terminfo -> $USER_GHOSTTY_CFG"
+fi
+
 # ---- 3. oh-my-zsh ----------------------------------------------------------
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 say "Checking oh-my-zsh"

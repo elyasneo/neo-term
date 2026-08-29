@@ -165,7 +165,7 @@ command -v atuin >/dev/null && eval "$(atuin init zsh)"
 # --- eza (ls replacement) -------------------------------------------------
 if command -v eza >/dev/null; then
   alias ls='eza --group-directories-first --icons'
-  alias l='eza -lbF --git --icons --group-directories-first'
+  alias l='eza -lbF -snew --git --icons --group-directories-first'
   alias ll='eza -lbha -snew --git --icons --group-directories-first'
   alias la='eza -lbhHigUmuSa -snew --git --icons --group-directories-first'
   alias lt='eza --tree --level=2 --icons --group-directories-first'

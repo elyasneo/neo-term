@@ -192,12 +192,21 @@ setup_iterm2() {
       "Guid": "$guid",
       "Normal Font": "$TERM_FONT $TERM_FONT_SIZE",
       "Option Key Sends": 2,
-      "Right Option Key Sends": 0
+      "Right Option Key Sends": 0,
+      "Keyboard Map": {
+        "0xf702-0x300000": { "Action": 11, "Text": "0x01" },
+        "0xf703-0x300000": { "Action": 11, "Text": "0x05" },
+        "0xf702-0x280000": { "Action": 10, "Text": "b" },
+        "0xf703-0x280000": { "Action": 10, "Text": "f" }
+      }
     }
   ]
 }
 JSON
+  # Keyboard Map: Cmd-Left/Right send Ctrl-A/Ctrl-E (line start/end),
+  # Option-Left/Right send Esc-b/Esc-f (word back/forward).
   ok "profile 'neo-term' -> $dir/neo-term.json (left Option = Esc+, right Option = normal)"
+  ok "Cmd-←/→ jump to line start/end, Option-←/→ jump by word"
 
   # iTerm2 rewrites its prefs on quit, so this only sticks if it isn't running.
   if pgrep -xq iTerm2; then

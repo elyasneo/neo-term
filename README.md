@@ -39,7 +39,8 @@ set the theme and enable plugins, and a timestamped backup is made first.
      key*). Option then no longer types special characters.
    - **iTerm2** — adds a `neo-term` Dynamic
      Profile (left Option = Esc+, right Option still types special characters),
-     made the default when iTerm2 isn't running.
+     made the default when iTerm2 isn't running. It also maps `Cmd-←` / `Cmd-→`
+     to line start / end and `Option-←` / `Option-→` to word back / forward.
    - **Ghostty** — includes `~/App/ghostty/config`
      from Ghostty's config, and adds `font-family`, `macos-option-as-alt` and
      SSH terminfo to it only where those keys aren't set yet.

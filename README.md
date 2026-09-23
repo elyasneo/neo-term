@@ -1,21 +1,18 @@
 # neo-term
 
-A one-shot script that sets up a modern terminal toolchain on a fresh Mac, in the
-terminal of your choice: **Terminal.app** (built in), **iTerm2** or **Ghostty**.
+A one-shot script that sets up a modern terminal toolchain on a fresh Mac, in
+**iTerm2**.
 
 ```
-Terminal.app | iTerm2 | Ghostty · zsh · oh-my-zsh · powerlevel10k
+iTerm2 · zsh · oh-my-zsh · powerlevel10k
 fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop · neovim
 ```
 
 ## Usage
 
 ```sh
-./setup-terminal.sh                      # asks which terminal to set up
-./setup-terminal.sh --terminal iterm2    # or pick one: terminal | iterm2 | ghostty
+./setup-terminal.sh
 ```
-
-Without `--terminal` and without a TTY (e.g. piped), it uses Terminal.app.
 
 The script is **idempotent** — run it as often as you like. It installs anything
 missing and skips whatever is already present. Your `~/.zshrc` is only touched to
@@ -28,24 +25,18 @@ set the theme and enable plugins, and a timestamped backup is made first.
 
 1. **Homebrew** — installs it if absent (this also pulls in the Xcode Command
    Line Tools, i.e. `git`), and adds `brew shellenv` to `~/.zprofile` so new
-   Terminal windows find it.
-   Right after that it installs the terminal you picked (iTerm2 or Ghostty) if
-   it isn't already installed, and stops if that install fails.
+   iTerm2 windows find it.
+   Right after that it installs iTerm2 if it isn't already installed, and stops
+   if that install fails.
 2. **CLI tools** — `brew install`s the formulae above, and downloads the
    **MesloLGS NF** fonts powerlevel10k is tuned for into `~/Library/Fonts`.
-3. **Your terminal** — sets the font to MesloLGS NF and makes Option act as
-   Meta/Alt so `Alt-C`, `Alt-.` etc. work instead of typing `ç` / `≥`:
-   - **Terminal.app** — edits the default profile (font 13, *Use Option as Meta
-     key*). Option then no longer types special characters.
-   - **iTerm2** — adds a `neo-term` Dynamic
-     Profile (left Option = Esc+, right Option still types special characters),
-     made the default when iTerm2 isn't running. It also maps `Cmd-←` / `Cmd-→`
-     to line start / end and `Option-←` / `Option-→` to word back / forward.
-     Its colors come from `themes/One Dark.itermcolors`, and every scheme in
-     [`themes/`](themes) is added to *Color Presets* (see [Themes](#themes)).
-   - **Ghostty** — includes `~/App/ghostty/config`
-     from Ghostty's config, and adds `font-family`, `macos-option-as-alt` and
-     SSH terminfo to it only where those keys aren't set yet.
+3. **iTerm2** — adds a `neo-term` Dynamic Profile with the MesloLGS NF font and
+   left Option = Esc+ (so `Alt-C`, `Alt-.` etc. work instead of typing `ç` / `≥`;
+   right Option still types special characters), made the default when iTerm2
+   isn't running. It also maps `Cmd-←` / `Cmd-→` to line start / end and
+   `Option-←` / `Option-→` to word back / forward. Its colors come from
+   `themes/iterm2/One Dark.itermcolors`, and every scheme there is added to
+   *Color Presets* (see [Themes](#themes)).
 4. **oh-my-zsh** — unattended install if missing (keeps your existing `.zshrc`).
 5. **Theme + plugins** — clones powerlevel10k and `fast-syntax-highlighting`,
    then enables them in
@@ -79,13 +70,14 @@ atuin import auto     # import existing history (optional)
 
 ## Themes
 
-`themes/` holds the 80 iTerm2 color schemes from
-[terminalcolors.com](https://terminalcolors.com/), one `.itermcolors` file per
-scheme, named after the preset it becomes. To change the `neo-term` profile's
-colors, set `DEFAULT_THEME` in `setup-terminal.sh` to another file name (without
-`.itermcolors`) and re-run. Or pick one live in iTerm2 under Settings > Profiles >
-Colors > Color Presets. Presets are only written while iTerm2 isn't running,
-and a preset with the same name as a theme file is replaced.
+`themes/iterm2` holds the 80 color schemes from
+[terminalcolors.com](https://terminalcolors.com/) as `.itermcolors` files, each
+added as an iTerm2 *Color Preset* named after its file.
+
+*One Dark* is the default. To change it, set `DEFAULT_THEME` in
+`setup-terminal.sh` to another theme name (without extension) and re-run.
+Same-named presets are replaced; others are left alone. Presets are only
+written while iTerm2 isn't running (it rewrites its prefs on quit).
 
 ## Managed file
 

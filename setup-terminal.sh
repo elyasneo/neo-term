@@ -2,7 +2,7 @@
 #
 # setup-terminal.sh — provision a modern terminal toolchain.
 #
-#   Stack : Terminal.app | iTerm2 | Ghostty + zsh + oh-my-zsh + powerlevel10k
+#   Stack : iTerm2 + zsh + oh-my-zsh + powerlevel10k
 #   Tools : fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop · neovim
 #
 # Idempotent: safe to run repeatedly. Installs anything missing, then wires the
@@ -10,8 +10,7 @@
 # oh-my-zsh after plugins). Your ~/.zshrc is only touched to enable plugins,
 # and a timestamped backup is made first.
 #
-# Usage: ./setup-terminal.sh [--terminal terminal|iterm2|ghostty]
-#        Without --terminal it asks (defaults to Terminal.app when not a TTY).
+# Usage: ./setup-terminal.sh
 #
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,45 +23,17 @@ warn() { printf '%s  !!%s %s\n' "$c_warn" "$c_off" "$*"; }
 
 [[ "$(uname -s)" == "Darwin" ]] || { warn "This script targets macOS."; }
 
-# ---- 0. pick the terminal emulator -----------------------------------------
-TERMINAL=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --terminal)   TERMINAL="${2:-}"; shift 2 ;;
-    --terminal=*) TERMINAL="${1#*=}"; shift ;;
-    -h|--help)    sed -n '2,16p' "$0"; exit 0 ;;
-    *)            warn "unknown argument: $1"; exit 1 ;;
+    -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+    *)         warn "unknown argument: $1"; exit 1 ;;
   esac
 done
-if [[ -z "$TERMINAL" ]]; then
-  if [[ -t 0 ]]; then
-    say "Which terminal do you want to set up?"
-    printf '    1) Terminal.app  (macOS default)\n'
-    printf '    2) iTerm2\n'
-    printf '    3) Ghostty\n'
-    while [[ -z "$TERMINAL" ]]; do
-      printf 'Choose 1-3 [1]: '
-      read -r choice || choice=1   # Ctrl-D -> default
-      case "${choice:-1}" in
-        1) TERMINAL=terminal ;;
-        2) TERMINAL=iterm2 ;;
-        3) TERMINAL=ghostty ;;
-        *) warn "please enter 1, 2 or 3" ;;
-      esac
-    done
-  else
-    TERMINAL=terminal
-  fi
-fi
-case "$TERMINAL" in
-  terminal|iterm2|ghostty) ok "terminal: $TERMINAL" ;;
-  *) warn "unknown terminal '$TERMINAL' (use terminal, iterm2 or ghostty)"; exit 1 ;;
-esac
 
 # ---- 1. Homebrew -----------------------------------------------------------
 # On a fresh Mac brew is absent and, once installed, not on PATH: the installer
 # only *prints* the shellenv line. We load it for this run and persist it in
-# ~/.zprofile (Terminal.app opens login shells, which read it).
+# ~/.zprofile (iTerm2 opens login shells, which read it).
 say "Checking Homebrew"
 brew_bin() {
   command -v brew 2>/dev/null && return
@@ -86,7 +57,7 @@ else
   ok "added brew shellenv -> ~/.zprofile"
 fi
 
-# ---- 1b. install the chosen terminal if missing ----------------------------
+# ---- 1b. install iTerm2 if missing ---------------------------------------
 # Done right after brew so a failed install stops the run before anything else.
 # Looks in both Applications folders and asks Spotlight by bundle id, so an app
 # installed by hand (not via brew) is detected too.
@@ -103,11 +74,7 @@ ensure_app() { # ensure_app <App.app> <bundle-id> <cask>
     ok "${1%.app} installed"
   fi
 }
-case "$TERMINAL" in
-  terminal) ok "Terminal.app is built into macOS" ;;
-  iterm2)   ensure_app iTerm.app   com.googlecode.iterm2 iterm2 ;;
-  ghostty)  ensure_app Ghostty.app com.mitchellh.ghostty ghostty ;;
-esac
+ensure_app iTerm.app com.googlecode.iterm2 iterm2
 
 # ---- 2. CLI tools ----------------------------------------------------------
 FORMULAE=(fzf zoxide fd ripgrep eza bat atuin yazi btop neovim)
@@ -137,53 +104,18 @@ for style in Regular Bold Italic "Bold Italic"; do
   fi
 done
 
-# ---- 2b. terminal emulator: font + Option-as-Meta -------------------------
-# Every option gets the MesloLGS NF font and a Meta/Alt Option key, so Alt-C
+# ---- 2b. iTerm2: font + Option-as-Meta ------------------------------------
+# The profile gets the MesloLGS NF font and a Meta/Alt Option key, so Alt-C
 # (fzf cd), Alt-. and friends work instead of typing ç / ≥.
 TERM_FONT="MesloLGS-NF-Regular"   # PostScript name
 TERM_FONT_SIZE=13
-DEFAULT_THEME="One Dark"          # iTerm2: a file name in themes/, minus .itermcolors
-
-setup_terminal_app() {
-  say "Configuring Terminal.app"
-  local profile
-  if profile="$(osascript 2>/dev/null <<OSA
-tell application "Terminal"
-  set font name of default settings to "$TERM_FONT"
-  set font size of default settings to $TERM_FONT_SIZE
-  set font name of startup settings to "$TERM_FONT"
-  set font size of startup settings to $TERM_FONT_SIZE
-  return name of default settings
-end tell
-OSA
-  )"; then
-    ok "font -> $TERM_FONT $TERM_FONT_SIZE (profile: $profile)"
-    # Not scriptable via AppleScript, so edit the prefs through cfprefsd
-    # (export -> PlistBuddy -> import) rather than the plist file directly.
-    sleep 1   # let Terminal flush the font change first
-    local PB=/usr/libexec/PlistBuddy tplist meta_key
-    tplist="$(mktemp -t terminal-prefs)"
-    meta_key=":Window Settings:$profile:useOptionAsMetaKey"
-    if defaults export com.apple.Terminal "$tplist" \
-      && { "$PB" -c "Set \"$meta_key\" true" "$tplist" 2>/dev/null \
-        || "$PB" -c "Add \"$meta_key\" bool true" "$tplist"; } \
-      && defaults import com.apple.Terminal "$tplist"; then
-      ok "Option key -> Meta (profile: $profile)"
-    else
-      warn "could not enable Option-as-Meta; set it in Terminal > Settings > Profiles > Keyboard"
-    fi
-    rm -f "$tplist"
-  else
-    warn "could not script Terminal.app (allow it under System Settings > Privacy > Automation)"
-    warn "set the font manually: Terminal > Settings > Profiles > Text > MesloLGS NF"
-  fi
-}
+DEFAULT_THEME="One Dark"          # a theme name in themes/iterm2/, minus the extension
 
 setup_iterm2() {
   say "Configuring iTerm2"
-  # Color schemes live in themes/ next to this script (from terminalcolors.com);
+  # Color schemes live in themes/iterm2 next to this script (from terminalcolors.com);
   # DEFAULT_THEME colors the neo-term profile, and all of them become presets.
-  local themes="$SCRIPT_DIR/themes" theme_file="$SCRIPT_DIR/themes/$DEFAULT_THEME.itermcolors"
+  local themes="$SCRIPT_DIR/themes/iterm2" theme_file="$SCRIPT_DIR/themes/iterm2/$DEFAULT_THEME.itermcolors"
   # A Dynamic Profile is a plain JSON file iTerm2 watches, so it works even
   # before iTerm2's first launch and is fully rewritten on every run.
   local dir="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
@@ -232,7 +164,7 @@ JSON
   fi
   # Each theme becomes a Color Preset named after its file, replacing a preset
   # of the same name; other custom presets are left alone. Edited through
-  # cfprefsd (export -> PlistBuddy -> import), like Terminal.app above.
+  # cfprefsd (export -> PlistBuddy -> import) rather than the plist file directly.
   local prefs f name n=0
   prefs="$(mktemp -t iterm2-prefs)"
   defaults export com.googlecode.iterm2 "$prefs"
@@ -252,47 +184,7 @@ JSON
   ok "neo-term set as the default iTerm2 profile"
 }
 
-setup_ghostty() {
-  say "Configuring Ghostty"
-  local GHOSTTY_DIR="$HOME/Library/Application Support/com.mitchellh.ghostty"
-  local GHOSTTY_CFG="$GHOSTTY_DIR/config.ghostty"
-  local GHOSTTY_LINE="config-file = ~/App/ghostty/config"
-  mkdir -p "$GHOSTTY_DIR"
-  if [[ -f "$GHOSTTY_CFG" ]] && grep -qxF "$GHOSTTY_LINE" "$GHOSTTY_CFG"; then
-    ok "Ghostty include already present"
-  else
-    printf '%s\n' "$GHOSTTY_LINE" >>"$GHOSTTY_CFG"
-    ok "added include -> $GHOSTTY_CFG"
-  fi
-
-  # Settings go into your own config (~/App/ghostty/config); each is only added
-  # when that key isn't set yet, so your choices win.
-  #  - font: the Nerd Font p10k is tuned for.
-  #  - Option as Alt: for Alt-C / Alt-. (Ghostty's default types ç / ≥).
-  #  - ssh-terminfo: Ghostty sets TERM=xterm-ghostty, which most remotes lack a
-  #    terminfo entry for, breaking cursor/line-editing over SSH. ssh-terminfo
-  #    installs it on the remote; ssh-env falls back to xterm-256color.
-  local USER_GHOSTTY_CFG="$HOME/App/ghostty/config" line
-  mkdir -p "$(dirname "$USER_GHOSTTY_CFG")"
-  touch "$USER_GHOSTTY_CFG"
-  for line in \
-    "font-family = MesloLGS NF" \
-    "macos-option-as-alt = true" \
-    "shell-integration-features = ssh-env,ssh-terminfo"; do
-    if grep -q "^${line%% =*}" "$USER_GHOSTTY_CFG"; then
-      ok "Ghostty ${line%% =*} already set"
-    else
-      printf '%s\n' "$line" >>"$USER_GHOSTTY_CFG"
-      ok "set '$line' -> $USER_GHOSTTY_CFG"
-    fi
-  done
-}
-
-case "$TERMINAL" in
-  terminal) setup_terminal_app; TERM_NAME="Terminal" ;;
-  iterm2)   setup_iterm2;       TERM_NAME="iTerm2" ;;
-  ghostty)  setup_ghostty;      TERM_NAME="Ghostty" ;;
-esac
+setup_iterm2
 
 # ---- 3. oh-my-zsh ----------------------------------------------------------
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
@@ -426,7 +318,7 @@ echo
 ok "Setup complete."
 say "Next steps:"
 cat <<EOF
-  1. Quit $TERM_NAME (Cmd-Q) and reopen it so the font + Option key settings apply.
+  1. Quit iTerm2 (Cmd-Q) and reopen it so the font + Option key settings apply.
   2. Configure the prompt:   p10k configure
   3. Import existing history into atuin (optional): atuin import auto
 

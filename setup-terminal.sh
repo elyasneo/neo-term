@@ -14,6 +14,7 @@
 #        Without --terminal it asks (defaults to Terminal.app when not a TTY).
 #
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ---- pretty output ---------------------------------------------------------
 c_ok=$'\033[32m'; c_info=$'\033[36m'; c_warn=$'\033[33m'; c_off=$'\033[0m'
@@ -141,6 +142,7 @@ done
 # (fzf cd), Alt-. and friends work instead of typing ç / ≥.
 TERM_FONT="MesloLGS-NF-Regular"   # PostScript name
 TERM_FONT_SIZE=13
+DEFAULT_THEME="One Dark"          # iTerm2: a file name in themes/, minus .itermcolors
 
 setup_terminal_app() {
   say "Configuring Terminal.app"
@@ -179,12 +181,16 @@ OSA
 
 setup_iterm2() {
   say "Configuring iTerm2"
+  # Color schemes live in themes/ next to this script (from terminalcolors.com);
+  # DEFAULT_THEME colors the neo-term profile, and all of them become presets.
+  local themes="$SCRIPT_DIR/themes" theme_file="$SCRIPT_DIR/themes/$DEFAULT_THEME.itermcolors"
   # A Dynamic Profile is a plain JSON file iTerm2 watches, so it works even
   # before iTerm2's first launch and is fully rewritten on every run.
   local dir="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
-  local guid="neo-term-profile"
+  local guid="neo-term-profile" PB=/usr/libexec/PlistBuddy tmp
   mkdir -p "$dir"
-  cat >"$dir/neo-term.json" <<JSON
+  tmp="$(mktemp -t neo-term-profile)"
+  cat >"$tmp" <<JSON
 {
   "Profiles": [
     {
@@ -193,32 +199,6 @@ setup_iterm2() {
       "Normal Font": "$TERM_FONT $TERM_FONT_SIZE",
       "Option Key Sends": 2,
       "Right Option Key Sends": 0,
-      "Ansi 0 Color": { "Color Space": "sRGB", "Red Component": 0.1020, "Green Component": 0.1020, "Blue Component": 0.1020 },
-      "Ansi 1 Color": { "Color Space": "sRGB", "Red Component": 0.7993, "Green Component": 0.2163, "Blue Component": 0.1818 },
-      "Ansi 2 Color": { "Color Space": "sRGB", "Red Component": 0.1492, "Green Component": 0.6415, "Blue Component": 0.2238 },
-      "Ansi 3 Color": { "Color Space": "sRGB", "Red Component": 0.8030, "Green Component": 0.6739, "Blue Component": 0.0315 },
-      "Ansi 4 Color": { "Color Space": "sRGB", "Red Component": 0.0313, "Green Component": 0.4128, "Blue Component": 0.7975 },
-      "Ansi 5 Color": { "Color Space": "sRGB", "Red Component": 0.5896, "Green Component": 0.2778, "Blue Component": 0.7471 },
-      "Ansi 6 Color": { "Color Space": "sRGB", "Red Component": 0.2791, "Green Component": 0.6203, "Blue Component": 0.7598 },
-      "Ansi 7 Color": { "Color Space": "sRGB", "Red Component": 0.5961, "Green Component": 0.5961, "Blue Component": 0.6157 },
-      "Ansi 8 Color": { "Color Space": "sRGB", "Red Component": 0.2745, "Green Component": 0.2745, "Blue Component": 0.2745 },
-      "Ansi 9 Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 0.2706, "Blue Component": 0.2275 },
-      "Ansi 10 Color": { "Color Space": "sRGB", "Red Component": 0.1961, "Green Component": 0.8431, "Blue Component": 0.2941 },
-      "Ansi 11 Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 0.8392, "Blue Component": 0.0392 },
-      "Ansi 12 Color": { "Color Space": "sRGB", "Red Component": 0.0392, "Green Component": 0.5176, "Blue Component": 1.0000 },
-      "Ansi 13 Color": { "Color Space": "sRGB", "Red Component": 0.7490, "Green Component": 0.3529, "Blue Component": 0.9490 },
-      "Ansi 14 Color": { "Color Space": "sRGB", "Red Component": 0.4620, "Green Component": 0.8383, "Blue Component": 1.0000 },
-      "Ansi 15 Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 1.0000, "Blue Component": 1.0000 },
-      "Background Color": { "Color Space": "sRGB", "Red Component": 0.1176, "Green Component": 0.1176, "Blue Component": 0.1176 },
-      "Foreground Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 1.0000, "Blue Component": 1.0000 },
-      "Bold Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 1.0000, "Blue Component": 1.0000 },
-      "Cursor Color": { "Color Space": "sRGB", "Red Component": 0.5961, "Green Component": 0.5961, "Blue Component": 0.6157 },
-      "Cursor Text Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 1.0000, "Blue Component": 1.0000 },
-      "Selection Color": { "Color Space": "sRGB", "Red Component": 0.2471, "Green Component": 0.3882, "Blue Component": 0.5451 },
-      "Selected Text Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 1.0000, "Blue Component": 1.0000 },
-      "Link Color": { "Color Space": "sRGB", "Red Component": 0.2549, "Green Component": 0.6118, "Blue Component": 1.0000 },
-      "Badge Color": { "Color Space": "sRGB", "Red Component": 1.0000, "Green Component": 0.1491, "Blue Component": 0.0000, "Alpha Component": 0.50 },
-      "Cursor Guide Color": { "Color Space": "sRGB", "Red Component": 0.7021, "Green Component": 0.9268, "Blue Component": 1.0000, "Alpha Component": 0.25 },
       "Keyboard Map": {
         "0xf702-0x300000": { "Action": 11, "Text": "0x01" },
         "0xf703-0x300000": { "Action": 11, "Text": "0x05" },
@@ -229,20 +209,47 @@ setup_iterm2() {
   ]
 }
 JSON
-  # Colors: the "Apple System Colors" scheme from iTerm2-Color-Schemes.
   # Keyboard Map: Cmd-Left/Right send Ctrl-A/Ctrl-E (line start/end),
   # Option-Left/Right send Esc-b/Esc-f (word back/forward).
+  # Colors: an .itermcolors file uses the same keys as a profile, so merge the
+  # default theme straight into it (as a plist, then back to JSON).
+  plutil -convert xml1 "$tmp"
+  if [[ -f "$theme_file" ]]; then
+    "$PB" -c "Merge \"$theme_file\" :Profiles:0" "$tmp" >/dev/null
+  else
+    warn "theme '$DEFAULT_THEME' not found in $themes; keeping iTerm2's default colors"
+  fi
+  plutil -convert json -o "$dir/neo-term.json" "$tmp"
+  rm -f "$tmp"
   ok "profile 'neo-term' -> $dir/neo-term.json (left Option = Esc+, right Option = normal)"
-  ok "colors -> Apple System Colors"
+  ok "colors -> $DEFAULT_THEME"
   ok "Cmd-←/→ jump to line start/end, Option-←/→ jump by word"
 
-  # iTerm2 rewrites its prefs on quit, so this only sticks if it isn't running.
+  # iTerm2 rewrites its prefs on quit, so these only stick if it isn't running.
   if pgrep -xq iTerm2; then
-    warn "iTerm2 is running; make 'neo-term' the default in Settings > Profiles (or quit iTerm2 and re-run)"
-  else
-    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$guid"
-    ok "neo-term set as the default iTerm2 profile"
+    warn "iTerm2 is running; quit it and re-run to add the color presets and make 'neo-term' the default"
+    return
   fi
+  # Each theme becomes a Color Preset named after its file, replacing a preset
+  # of the same name; other custom presets are left alone. Edited through
+  # cfprefsd (export -> PlistBuddy -> import), like Terminal.app above.
+  local prefs f name n=0
+  prefs="$(mktemp -t iterm2-prefs)"
+  defaults export com.googlecode.iterm2 "$prefs"
+  "$PB" -c "Add ':Custom Color Presets' dict" "$prefs" 2>/dev/null || true
+  for f in "$themes"/*.itermcolors; do
+    [[ -f "$f" ]] || continue
+    name="$(basename "$f" .itermcolors)"
+    "$PB" -c "Delete ':Custom Color Presets:$name'" "$prefs" 2>/dev/null || true
+    "$PB" -c "Add ':Custom Color Presets:$name' dict" -c "Merge \"$f\" ':Custom Color Presets:$name'" "$prefs" >/dev/null
+    n=$((n + 1))
+  done
+  defaults import com.googlecode.iterm2 "$prefs"
+  rm -f "$prefs"
+  ok "$n color presets added (Settings > Profiles > Colors > Color Presets)"
+
+  defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$guid"
+  ok "neo-term set as the default iTerm2 profile"
 }
 
 setup_ghostty() {

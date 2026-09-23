@@ -40,8 +40,9 @@ set the theme and enable plugins, and a timestamped backup is made first.
    - **iTerm2** — adds a `neo-term` Dynamic
      Profile (left Option = Esc+, right Option still types special characters),
      made the default when iTerm2 isn't running. It also maps `Cmd-←` / `Cmd-→`
-     to line start / end and `Option-←` / `Option-→` to word back / forward,
-     and uses the *Apple System Colors* color scheme.
+     to line start / end and `Option-←` / `Option-→` to word back / forward.
+     Its colors come from `themes/One Dark.itermcolors`, and every scheme in
+     [`themes/`](themes) is added to *Color Presets* (see [Themes](#themes)).
    - **Ghostty** — includes `~/App/ghostty/config`
      from Ghostty's config, and adds `font-family`, `macos-option-as-alt` and
      SSH terminfo to it only where those keys aren't set yet.
@@ -75,6 +76,16 @@ atuin import auto     # import existing history (optional)
 
 `find` and `grep` are intentionally **not** aliased — use `fd` and `rg` directly
 (different syntax); fzf already uses them under the hood.
+
+## Themes
+
+`themes/` holds the 80 iTerm2 color schemes from
+[terminalcolors.com](https://terminalcolors.com/), one `.itermcolors` file per
+scheme, named after the preset it becomes. To change the `neo-term` profile's
+colors, set `DEFAULT_THEME` in `setup-terminal.sh` to another file name (without
+`.itermcolors`) and re-run. Or pick one live in iTerm2 under Settings > Profiles >
+Colors > Color Presets. Presets are only written while iTerm2 isn't running,
+and a preset with the same name as a theme file is replaced.
 
 ## Managed file
 

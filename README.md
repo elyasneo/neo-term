@@ -31,7 +31,7 @@ set the theme and enable plugins, and a timestamped backup is made first.
 2. **CLI tools** — `brew install`s the formulae above, and downloads the
    **MesloLGS NF** fonts powerlevel10k is tuned for into `~/Library/Fonts`.
 3. **iTerm2** — adds a `neo-term` Dynamic Profile with the MesloLGS NF font and
-   left Option = Esc+ (so `Alt-C`, `Alt-.` etc. work instead of typing `ç` / `≥`;
+   left Option = Esc+ (so `Option-C`, `Option-.` etc. work instead of typing `ç` / `≥`;
    right Option still types special characters), made the default when iTerm2
    isn't running. It also maps `Cmd-←` / `Cmd-→` to line start / end and
    `Option-←` / `Option-→` to word back / forward. Its colors come from
@@ -63,7 +63,7 @@ atuin import auto     # import existing history (optional)
 | `vim` / `vi` | neovim | neovim |
 | `top` / `htop` | resource monitor | btop |
 | `y` | file manager that `cd`s to where you quit | yazi |
-| `Ctrl-T` / `Alt-C` / `Ctrl-R` | file / dir / history pickers | fzf + atuin |
+| `Ctrl-T` / `Option-C` / `Ctrl-R` | file / dir / history pickers | fzf + atuin |
 | `neo-term` / `neo-term --help` | cheat sheet of everything above | neo-term |
 
 `find` and `grep` are intentionally **not** aliased — use `fd` and `rg` directly

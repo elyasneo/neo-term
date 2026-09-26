@@ -105,8 +105,8 @@ for style in Regular Bold Italic "Bold Italic"; do
 done
 
 # ---- 2b. iTerm2: font + Option-as-Meta ------------------------------------
-# The profile gets the MesloLGS NF font and a Meta/Alt Option key, so Alt-C
-# (fzf cd), Alt-. and friends work instead of typing ç / ≥.
+# The profile gets the MesloLGS NF font and a Meta Option key, so Option-C
+# (fzf cd), Option-. and friends work instead of typing ç / ≥.
 TERM_FONT="MesloLGS-NF-Regular"   # PostScript name
 TERM_FONT_SIZE=13
 DEFAULT_THEME="One Dark"          # a theme name in themes/iterm2/, minus the extension
@@ -258,7 +258,7 @@ if command -v fzf >/dev/null; then
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --info=inline'
   export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:300 {} 2>/dev/null || eza -la --color=always {}'"
   export FZF_ALT_C_OPTS="--preview 'eza -la --color=always --icons {} 2>/dev/null'"
-  # Keybindings + completion (Homebrew path). Binds Ctrl-T / Alt-C / Ctrl-R.
+  # Keybindings + completion (Homebrew path). Binds Ctrl-T / Option-C / Ctrl-R.
   if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
     source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
     source "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh"   2>/dev/null
@@ -346,7 +346,7 @@ ${b}Editing & monitoring${o}
 
 ${b}Keybindings${o}
   ${c}Ctrl-T${o}          pick a file, with preview (fzf)
-  ${c}Alt-C${o}           pick a directory and cd into it (fzf)
+  ${c}Option-C${o}        pick a directory and cd into it (fzf)
   ${c}Ctrl-R${o}          search shell history (atuin)
   ${c}Cmd-←/→${o}         jump to line start / end (iTerm2)
   ${c}Option-←/→${o}      jump word back / forward (iTerm2)
@@ -376,6 +376,6 @@ cat <<EOF
   3. Import existing history into atuin (optional): atuin import auto
 
   New commands: cd (zoxide) · cdi · ls/l/ll/la/lt · cat (bat) · vim (nvim)
-                top (btop) · y (yazi) · fd · rg · fzf (Ctrl-T/Alt-C/Ctrl-R)
+                top (btop) · y (yazi) · fd · rg · fzf (Ctrl-T/Option-C/Ctrl-R)
   Run 'neo-term' (or 'neo-term --help') any time to list them all.
 EOF

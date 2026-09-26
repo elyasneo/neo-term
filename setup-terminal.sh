@@ -310,6 +310,59 @@ fi
 
 # NOTE: `find`/`grep` are intentionally NOT aliased — use `fd` and `rg`
 # directly (different syntax). fzf already uses them under the hood.
+
+# --- neo-term: cheat sheet of everything this setup provides --------------
+function neo-term() {
+  case "${1:-}" in
+    ""|-h|--help|help) ;;
+    *) print -u2 "neo-term: unknown argument: $1 (try: neo-term --help)"; return 1 ;;
+  esac
+  local b=$'\e[1;36m' c=$'\e[32m' o=$'\e[0m'
+  cat <<EOF
+${b}neo-term${o} — commands provided by setup-terminal.sh
+
+${b}Navigation${o}
+  ${c}cd <dir>${o}        frecency-aware jump, e.g. "cd proj" (zoxide)
+  ${c}cdi${o}             interactive directory picker (zoxide)
+  ${c}y${o}               file manager; cd's to the dir you quit in (yazi)
+
+${b}Listing & viewing${o}
+  ${c}ls${o}              icons, dirs first (eza)
+  ${c}l${o}               long list, newest first, git status
+  ${c}ll${o}              long list incl. hidden files
+  ${c}la${o}              long list, all details
+  ${c}lt${o}              tree, 2 levels
+  ${c}tree${o}            full tree
+  ${c}cat <file>${o}      syntax-highlighted output (bat)
+
+${b}Search${o}
+  ${c}fd <pattern>${o}    find files (instead of find)
+  ${c}rg <pattern>${o}    search file contents (instead of grep)
+  ${c}fzf${o}             fuzzy finder
+
+${b}Editing & monitoring${o}
+  ${c}vim${o} / ${c}vi${o}        neovim
+  ${c}top${o} / ${c}htop${o}      resource monitor (btop)
+
+${b}Keybindings${o}
+  ${c}Ctrl-T${o}          pick a file, with preview (fzf)
+  ${c}Alt-C${o}           pick a directory and cd into it (fzf)
+  ${c}Ctrl-R${o}          search shell history (atuin)
+  ${c}Cmd-←/→${o}         jump to line start / end (iTerm2)
+  ${c}Option-←/→${o}      jump word back / forward (iTerm2)
+
+${b}oh-my-zsh plugins${o}
+  ${c}git${o}             g, gst, gco, gp, gl, ...
+  ${c}kubectl${o}         k, kgp, kgs, kl, kaf, ...
+  ${c}docker-compose${o}  dco, dcup, dcdn, dcl, ...
+  (list any plugin's aliases with: alias | grep '^k')
+
+${b}Setup${o}
+  ${c}p10k configure${o}     reconfigure the prompt
+  ${c}atuin import auto${o}  import existing shell history
+  ${c}neo-term${o}           show this help (also: neo-term --help)
+EOF
+}
 ZRC
 ok "modern-cli.zsh written"
 
@@ -324,4 +377,5 @@ cat <<EOF
 
   New commands: cd (zoxide) · cdi · ls/l/ll/la/lt · cat (bat) · vim (nvim)
                 top (btop) · y (yazi) · fd · rg · fzf (Ctrl-T/Alt-C/Ctrl-R)
+  Run 'neo-term' (or 'neo-term --help') any time to list them all.
 EOF

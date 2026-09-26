@@ -64,6 +64,7 @@ atuin import auto     # import existing history (optional)
 | `top` / `htop` | resource monitor | btop |
 | `y` | file manager that `cd`s to where you quit | yazi |
 | `Ctrl-T` / `Alt-C` / `Ctrl-R` | file / dir / history pickers | fzf + atuin |
+| `neo-term` / `neo-term --help` | cheat sheet of everything above | neo-term |
 
 `find` and `grep` are intentionally **not** aliased — use `fd` and `rg` directly
 (different syntax); fzf already uses them under the hood.

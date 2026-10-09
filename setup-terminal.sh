@@ -257,7 +257,7 @@ if command -v fzf >/dev/null; then
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --info=inline'
   export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:300 {} 2>/dev/null || eza -la --color=always {}'"
-  export FZF_ALT_C_OPTS="--preview 'eza -la --color=always --icons {} 2>/dev/null'"
+  export FZF_ALT_C_OPTS="--preview 'eza -la --color=always --icons=always {} 2>/dev/null'"
   # Keybindings + completion (Homebrew path). Binds Ctrl-T / Option-C / Ctrl-R.
   if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
     source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
@@ -274,12 +274,12 @@ command -v atuin >/dev/null && eval "$(atuin init zsh)"
 
 # --- eza (ls replacement) -------------------------------------------------
 if command -v eza >/dev/null; then
-  alias ls='eza --group-directories-first --icons'
-  alias l='eza -lbF -snew --git --icons --group-directories-first'
-  alias ll='eza -lbha -snew --git --icons --group-directories-first'
-  alias la='eza -lbhHigUmuSa -snew --git --icons --group-directories-first'
-  alias lt='eza --tree --level=2 --icons --group-directories-first'
-  alias tree='eza --tree --icons'
+  alias ls='eza --group-directories-first --icons=auto'
+  alias l='eza -lbF -snew --git --icons=auto --group-directories-first'
+  alias ll='eza -lbha -snew --git --icons=auto --group-directories-first'
+  alias la='eza -lbhHigUmuSa -snew --git --icons=auto --group-directories-first'
+  alias lt='eza --tree --level=2 --icons=auto --group-directories-first'
+  alias tree='eza --tree --icons=auto'
 fi
 
 # --- bat (cat replacement; falls back to plain output when piped) ---------

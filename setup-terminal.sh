@@ -131,6 +131,7 @@ setup_iterm2() {
       "Normal Font": "$TERM_FONT $TERM_FONT_SIZE",
       "Option Key Sends": 2,
       "Right Option Key Sends": 0,
+      "Prevent Opening in a Tab": false,
       "Keyboard Map": {
         "0xf702-0x300000": { "Action": 11, "Text": "0x01" },
         "0xf703-0x300000": { "Action": 11, "Text": "0x05" },
@@ -141,6 +142,8 @@ setup_iterm2() {
   ]
 }
 JSON
+  # Prevent Opening in a Tab is pinned off so Cmd-T always opens a tab, even if
+  # "always open in a new window" was ticked in iTerm2's settings.
   # Keyboard Map: Cmd-Left/Right send Ctrl-A/Ctrl-E (line start/end),
   # Option-Left/Right send Esc-b/Esc-f (word back/forward).
   # Colors: an .itermcolors file uses the same keys as a profile, so merge the

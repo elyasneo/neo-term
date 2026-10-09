@@ -5,7 +5,7 @@ A one-shot script that sets up a modern terminal toolchain on a fresh Mac, in
 
 ```
 iTerm2 · zsh · oh-my-zsh · powerlevel10k
-fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop · neovim
+fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop
 ```
 
 ## Usage
@@ -60,7 +60,6 @@ atuin import auto     # import existing history (optional)
 | `cd` | frecency-aware jump (`cdi` for the picker) | zoxide |
 | `ls` / `l` / `ll` / `la` / `lt` | icon-rich listings & trees | eza |
 | `cat` | syntax-highlighted output | bat |
-| `vim` / `vi` | neovim | neovim |
 | `top` / `htop` | resource monitor | btop |
 | `y` | file manager that `cd`s to where you quit | yazi |
 | `Ctrl-T` / `Option-C` / `Ctrl-R` | file / dir / history pickers | fzf + atuin |

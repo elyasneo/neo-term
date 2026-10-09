@@ -3,7 +3,7 @@
 # setup-terminal.sh — provision a modern terminal toolchain.
 #
 #   Stack : iTerm2 + zsh + oh-my-zsh + powerlevel10k
-#   Tools : fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop · neovim
+#   Tools : fzf · zoxide · fd · ripgrep · eza · bat · atuin · yazi · btop
 #
 # Idempotent: safe to run repeatedly. Installs anything missing, then wires the
 # tools into the shell via ~/.oh-my-zsh/custom/modern-cli.zsh (auto-sourced by
@@ -77,7 +77,7 @@ ensure_app() { # ensure_app <App.app> <bundle-id> <cask>
 ensure_app iTerm.app com.googlecode.iterm2 iterm2
 
 # ---- 2. CLI tools ----------------------------------------------------------
-FORMULAE=(fzf zoxide fd ripgrep eza bat atuin yazi btop neovim)
+FORMULAE=(fzf zoxide fd ripgrep eza bat atuin yazi btop)
 say "Installing CLI tools: ${FORMULAE[*]}"
 installed="$(brew list --formula -1 2>/dev/null || true)"
 for f in "${FORMULAE[@]}"; do
@@ -239,12 +239,12 @@ say "Writing $ZSH_CUSTOM/modern-cli.zsh"
 cat >"$ZSH_CUSTOM/modern-cli.zsh" <<'ZRC'
 # ============================================================================
 #  modern-cli.zsh  —  MANAGED by setup-terminal.sh. Edits will be overwritten.
-#  Modern CLI tooling: fzf zoxide fd ripgrep eza bat atuin yazi btop neovim
+#  Modern CLI tooling: fzf zoxide fd ripgrep eza bat atuin yazi btop
 # ============================================================================
 
 # --- editor ---------------------------------------------------------------
-export EDITOR="nvim"
-export VISUAL="nvim"
+export EDITOR="vim"
+export VISUAL="vim"
 
 # --- bat (cat replacement) ------------------------------------------------
 export BAT_THEME="ansi"
@@ -284,12 +284,6 @@ fi
 
 # --- bat (cat replacement; falls back to plain output when piped) ---------
 command -v bat >/dev/null && alias cat='bat --paging=never'
-
-# --- neovim (vim replacement) ---------------------------------------------
-if command -v nvim >/dev/null; then
-  alias vim='nvim'
-  alias vi='nvim'
-fi
 
 # --- btop (top/htop replacement) ------------------------------------------
 if command -v btop >/dev/null; then
@@ -340,8 +334,7 @@ ${b}Search${o}
   ${c}rg <pattern>${o}    search file contents (instead of grep)
   ${c}fzf${o}             fuzzy finder
 
-${b}Editing & monitoring${o}
-  ${c}vim${o} / ${c}vi${o}        neovim
+${b}Monitoring${o}
   ${c}top${o} / ${c}htop${o}      resource monitor (btop)
 
 ${b}Keybindings${o}
@@ -375,7 +368,7 @@ cat <<EOF
   2. Configure the prompt:   p10k configure
   3. Import existing history into atuin (optional): atuin import auto
 
-  New commands: cd (zoxide) · cdi · ls/l/ll/la/lt · cat (bat) · vim (nvim)
-                top (btop) · y (yazi) · fd · rg · fzf (Ctrl-T/Option-C/Ctrl-R)
+  New commands: cd (zoxide) · cdi · ls/l/ll/la/lt · cat (bat) · top (btop)
+                y (yazi) · fd · rg · fzf (Ctrl-T/Option-C/Ctrl-R)
   Run 'neo-term' (or 'neo-term --help') any time to list them all.
 EOF
